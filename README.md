@@ -1,5 +1,6 @@
 # cantk-runtime
-[CanTK](https://github.com/drawapp8/cantk)运行时库。提供高效的HTML5 Canvas绘图API和兼容HTML5 Audio的游音乐/音效播放接口。
+
+提供高效的HTML5 Canvas绘图API和兼容HTML5 Audio的游音乐/音效播放接口。
 
 [CanTK](https://github.com/drawapp8/cantk)是开源的HTML5 APP/Game Engine。
 
