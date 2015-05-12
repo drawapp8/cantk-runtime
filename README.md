@@ -1,5 +1,9 @@
 # cantk-runtime
-[cantk](https://github.com/drawapp8/cantk)运行时库。提供高效的HTML5 Canvas绘图API和兼容HTML5 Audio的游音乐/音效播放接口。
+[CanTK](https://github.com/drawapp8/cantk)运行时库。提供高效的HTML5 Canvas绘图API和兼容HTML5 Audio的游音乐/音效播放接口。
+
+[CanTK](https://github.com/drawapp8/cantk)是开源的HTML5 APP/Game Engine。
+
+[TangIDE](http://www.tangide.com/gamebuilder.php)是在线开发HTML5游戏和应用的平台。
 
 ## 特色
 * 0.开源。开放全部源码，可用于商业和非商业的环境。
@@ -19,7 +23,7 @@
 ## 其它类似平台
 
 * 1.[Ejecta-X](https://github.com/Wizcorp/Ejecta-X): 体积大.
-* 
+
 * 2.[Egret Android Runtime](http://www.egret.com/runtime): 体积大，不开源。
 
 * 3.[PhoneGap Fast Cast](https://github.com/phonegap/phonegap-plugin-fast-canvas): 功能弱，开发停止。
