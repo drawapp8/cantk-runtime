@@ -1,6 +1,8 @@
-# cantk-runtime
+# Cantk-Runtime
 
-提供高效的HTML5 Canvas绘图API和兼容HTML5 Audio的游音乐/音效播放接口。
+Cantk-Runtime是通用的HTML5 Canvas 2D游戏引擎运行库，让HTML5游戏的性能飞起来。Cantk-Runtime以PhoneGap插件的方式提供，从此结束PhoneGap低性能的恶名！
+
+Cantk-Runtime提供高效的HTML5 Canvas绘图API、兼容HTML5 Audio的游音乐/音效播放接口和原生的编辑器接口， 让HTML5 Canvas 2D游戏只需要简单的适配就可以跑起来。
 
 ## 特色
 * 0.开源。开放全部源码，可用于商业和非商业的环境。
