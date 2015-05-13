@@ -46,9 +46,9 @@ phonegap plugin add https://github.com/drawapp8/cantk-runtime.git
 
 ## APK示例
 
-* 1.[松鼠跑酷](https://github.com/drawapp8/cantk-runtime-demos/raw/master/NutRush/platforms/android/ant-build/CordovaApp-debug-unaligned.apk)
+* 1.[松鼠跑酷](https://github.com/drawapp8/cantk-runtime-demos/raw/master/NutRush/platforms/android/ant-build/CordovaApp-debug.apk)
 
-* 2.[小红帽快跑](https://github.com/drawapp8/cantk-runtime-demos/raw/master/RedHat/platforms/android/ant-build/CordovaApp-debug-unaligned.apk)
+* 2.[小红帽快跑](https://github.com/drawapp8/cantk-runtime-demos/raw/master/RedHat/platforms/android/ant-build/CordovaApp-debug.apk)
  
-* 3.[FlappyBird](https://github.com/drawapp8/cantk-runtime-demos/raw/master/FlappyBird/platforms/android/ant-build/CordovaApp-debug-unaligned.apk)
+* 3.[FlappyBird](https://github.com/drawapp8/cantk-runtime-demos/raw/master/FlappyBird/platforms/android/ant-build/CordovaApp-debug.apk)
 
