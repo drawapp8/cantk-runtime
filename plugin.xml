@@ -1,0 +1,50 @@
+<?xml version='1.0' encoding='utf-8'?>
+<plugin id="com.tangide.cantk" version="1.0.0" xmlns="http://apache.org/cordova/ns/plugins/1.0" xmlns:android="http://schemas.android.com/apk/res/android">
+    <name>CantkRuntime</name>
+    <description>cantk runtime</description>
+
+    <author>Li XianJing</author>
+    <license>MIT</license>
+    <keywords>Fast, Android, Canvas, Audio</keywords>
+    <repo>https://github.com/drawapp8/cantk-runtime.git</repo>
+    <issue>https://github.com/drawapp8/cantk-runtime/issues</issue>
+
+    <engines>
+        <engine name="cordova" version=">=3.0.0"/>
+    </engines>
+
+    <js-module name="CantkRuntime" src="www/CantkRuntime.js">
+        <clobbers target="cordova.plugins.CantkRuntime" />
+    </js-module>
+    
+    <!-- Android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="RuntimePlugin">
+                <param name="android-package" value="com.tangide.cantk.RuntimePlugin" />
+                <param name="onload" value="true" />
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*"></config-file>
+		<source-file src="src/android/src/com/tangide/cantk/ActionInfo.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/ActionInfoQueue.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/CanvasJNI.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/CanvasRenderer.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/CanvasView.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/DownloadImageTask.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/ImageInfo.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/RuntimePlugin.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/SoundEffectPlayer.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/SoundMusicPlayer.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/TextEditor.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/ImageLoader.java" target-dir="src/com/tangide/cantk/" />
+		<source-file src="src/android/src/com/tangide/cantk/TaskInfo.java" target-dir="src/com/tangide/cantk/" />
+        <source-file src="src/android/libs/armeabi/libCanvasJNI.so" target-dir="libs/armeabi/" />
+        <source-file src="src/android/libs/mips/libCanvasJNI.so" target-dir="libs/mips/" />
+        <source-file src="src/android/libs/armeabi-v7a/libCanvasJNI.so" target-dir="libs/armeabi-v7a/" />
+        <source-file src="src/android/libs/x86/libCanvasJNI.so" target-dir="libs/x86/" />
+        <source-file src="src/android/libs/arm64-v8a/libCanvasJNI.so" target-dir="libs/arm64-v8a/" />
+        <source-file src="src/android/libs/mips64/libCanvasJNI.so" target-dir="libs/mips64/" />
+        <source-file src="src/android/libs/x86_64/libCanvasJNI.so" target-dir="libs/x86_64/" />
+    </platform>
+</plugin>
