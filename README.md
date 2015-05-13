@@ -29,7 +29,7 @@ phonegap plugin add https://github.com/drawapp8/cantk-runtime.git
 
 [TangIDE](http://www.tangide.com/gamebuilder.php)是在线开发HTML5游戏和应用的平台。
 
-[cantk-runtime-demos](https://github.com/drawapp8/cantk-runtime-demos) 几个使用cantk-runtime的示例项目，目前松鼠跑酷，小红帽快跑和FlappyBird。
+[cantk-runtime-demos](https://github.com/drawapp8/cantk-runtime-demos) 几个使用cantk-runtime的示例项目，目前有松鼠跑酷，小红帽快跑和FlappyBird。
 
 
 ## 其它类似平台
