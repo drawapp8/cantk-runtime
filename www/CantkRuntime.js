@@ -241,17 +241,19 @@ Canvas.FontImage.create = function(text, font, color) {
 	var fontImage = new Canvas.FontImage(text, font, color, width, height);
 	Canvas.loadImage(src, function(info) {
 		fontImage.textureID = info.id;
-		console.log("Canvas.loadFontImage success:" + JSON.stringify(info));
+		console.log("Canvas.loadFontImage success:" + info.id);
 	}, function(info) {
 		console.log("Canvas.loadImage fail:" + JSON.stringify(info));
 	});
 
-	Canvas.FontImage.caches.push(fontImage);
+	if(fontImage) {
+		Canvas.FontImage.caches.push(fontImage);
+	}
 
 	return fontImage;
 }
 
-Canvas.FontImage.clearOldCache = function() {
+Canvas.FontImage.clearOldCache = function(now) {
 	var caches = Canvas.FontImage.caches;
 	var n = caches.length;
 
@@ -259,13 +261,16 @@ Canvas.FontImage.clearOldCache = function() {
 		return;
 	}
 
-	var now = Date.now();
 	for(var i = 0; i < n; ) {
 		var iter = caches[i];
-		if((now - iter.recentUseTime) > 1000) {
-			console.log("Canvas.FontImage.clearOldCache remove:" + iter.text);
+		if(!iter) {
+			caches.splice(i, 1);
+			n--;
+		}
+		else if((now - iter.recentUseTime) > 3000) {
 			Canvas.unloadImage(iter.textureID);
 			caches.splice(i, 1);
+			n--;
 		}
 		else {
 			i++;
@@ -302,7 +307,7 @@ Canvas.prototype.getScaleY = function() {
 
 Canvas.prototype.getContext = function(type) {
 	Canvas.renderTime = Date.now();
-	Canvas.FontImage.clearOldCache();
+	Canvas.FontImage.clearOldCache(Canvas.renderTime);
 
 	this.context.commands = "";
 	this.context.scale(this.getScaleX(), this.getScaleY())
@@ -769,171 +774,6 @@ TextEditor.createMultiLineTextEditor = function() {
 	return TextEditor.multiLineTextEditor;
 }
 
-///////////////////////////////////////////////////////////////////////////////
-
-exports.getFPS = function () {
-	return Canvas.fps;
-}
-
-exports.getViewPort = function () {
-	return {width:Canvas.info.width, height:Canvas.info.height};
-}
-
-exports.setShowFPS = function (value) {
-	return Canvas.setShowFPS(value);
-}
-
-exports.createCanvas = function () {
-	return Canvas.create();
-}
-
-exports.createImage = function (src, onload, onerror) {
-	var image = new Image(); 
-
-	image.src = src;
-	image.info = {};
-	image.loadStartTime = Date.now();
-	Canvas.loadImage(src, function(info) {
-		image.info = info;
-//		image.width = info.width;
-//		image.height = info.height;
-		image.textureID = info.id;
-
-		if(onload) {
-			onload(image);
-		}
-		
-		info.loadCost = Date.now() - image.loadStartTime;
-		if(src.indexOf("data:") >= 0) {
-			info.url = null;
-			console.log("Canvas.loadImage success:" + JSON.stringify(info));
-		}
-		else {
-			console.log("Canvas.loadImage success:" + JSON.stringify(info));
-		}
-	}, function(info) {
-		image.info = info;
-		if(onerror) {
-			onerror(null);
-		}
-		console.log("Canvas.loadImage fail:" + JSON.stringify(info));
-	});
-
-	image.unload = function() {
-		if(this.textureID && this.textureID > 0) {
-			Canvas.unloadImage(this.textureID);
-			this.textureID = -1;
-		}
-	}
-
-	return image;
-}
-
-exports.createSoundEffect = function(url, onload, onerror) {
-	url = Canvas.absoluteURL(url);
-
-	var soundEffect = SoundEffect.audios[url];
-	if(soundEffect) {
-		if(onload) {
-			onload.call(soundEffect);
-		}
-		return soundEffect;
-	}
-
-	soundEffect = new SoundEffect();
-
-	soundEffect.onload = onload;
-	soundEffect.onerror = onerror;
-	soundEffect.setSrc(url);
-
-	SoundEffect.audios[url] = soundEffect;
-
-	console.log("exports.createSoundEffect:" + url);
-
-	return soundEffect;
-}
-
-exports.createSoundMusic = function(url, onload, onerror) {
-	url = Canvas.absoluteURL(url);
-
-	var soundMusic = SoundMusic.audios[url];
-	if(soundMusic) {
-		if(onload) {
-			onload.call(soundMusic);
-		}
-		return soundEffect;
-	}
-
-	soundMusic = new SoundMusic();
-
-	soundMusic.onload = onload;
-	soundMusic.onerror = onerror;
-	soundMusic.setSrc(url);
-
-	SoundMusic.audios[url] = soundMusic;
-
-	console.log("exports.createSoundMusic:" + url);
-
-	return soundMusic;
-}
-
-exports.createSingleLineTextEditor = function() {
-	return TextEditor.createSingleLineTextEditor();
-}
-
-exports.createMultiLineTextEditor = function() {
-	return TextEditor.createMultiLineTextEditor();
-}
-
-////////////////////////////////////////////////////////////////////////////
-
-exports.init = function() {
-	console.log("hook canvastouchevent ");
-	cordova.addWindowEventHandler('canvastouchevent');
-	window.addEventListener('canvastouchevent', function(e) {
-		if(Canvas.instance) {
-			Canvas.instance.dispatchTouchEvent(e);
-		}
-	});
-
-	console.log("hook soundmusicend");
-	cordova.addWindowEventHandler('soundmusicend');
-	window.addEventListener('soundmusicend', function(e) {
-		var url = e.url;
-		var audio = SoundMusic.audios[url];
-		if(audio) {
-			if(audio.onend) {
-				audio.onend();
-			}
-		}
-		console.log("soundmusicend:" + url);
-	});
-
-	cordova.addWindowEventHandler('editorchanged');
-	window.addEventListener('editorchanged', function(e) {
-		console.log("editorchanged:" + JSON.stringify(e));
-		TextEditor.textEdotr.notifyChanged(e.text);
-	}, false);
-
-	function onPause() {
-		console.log("onPause");
-	}
-
-	function onResume() {
-		console.log("onResume");
-	}
-
-	document.addEventListener("pause", onPause, false);
-	document.addEventListener("resume", onResume, false);
-
-	cordova.addWindowEventHandler('surfacechanged');
-	window.addEventListener('surfacechanged', function(e) {
-		console.log("surfacechanged:" + JSON.stringify(e));
-		Canvas.onSurfaceChanged(e.width, e.height);
-	}, false);
-
-	return;
-}
 Canvas.CMD_SET_LINEWIDTH = String.fromCharCode(65);
 Canvas.CMD_SET_FILLSTYLE = String.fromCharCode(66);
 Canvas.CMD_SET_STROKESTYLE = String.fromCharCode(67);
@@ -1057,6 +897,7 @@ Canvas.Context2d.prototype.defineProperties = function() {
 		enumerable: true,
 		configurable: true
 	});
+/*	
 	Object.defineProperty(ctx, "textAlign", {
 		set: function (textAlign) {
 			var cmd = Canvas.CMD_SET_TEXTALIGN+"("+textAlign+");";
@@ -1155,6 +996,7 @@ Canvas.Context2d.prototype.defineProperties = function() {
 		enumerable: true,
 		configurable: true
 	});
+*/	
 	Object.defineProperty(ctx, "lineCap", {
 		set: function (lineCap) {
 			var cmd = Canvas.CMD_SET_LINECAP+"("+lineCap+");";
@@ -1437,4 +1279,168 @@ Canvas.Context2d.prototype.drawImage9 = function(image, sx, sy, sw, sh, dx, dy, 
 	return this;
 }
 
+///////////////////////////////////////////////////////////////////////////////
 
+exports.getFPS = function () {
+	return Canvas.fps;
+}
+
+exports.getViewPort = function () {
+	return {width:Canvas.info.width, height:Canvas.info.height};
+}
+
+exports.setShowFPS = function (value) {
+	return Canvas.setShowFPS(value);
+}
+
+exports.createCanvas = function () {
+	return Canvas.create();
+}
+
+exports.createImage = function (src, onload, onerror) {
+	var image = new Image(); 
+
+	image.src = src;
+	image.info = {};
+	image.loadStartTime = Date.now();
+	Canvas.loadImage(src, function(info) {
+		image.info = info;
+//		image.width = info.width;
+//		image.height = info.height;
+		image.textureID = info.id;
+
+		if(onload) {
+			onload(image);
+		}
+		
+		info.loadCost = Date.now() - image.loadStartTime;
+		if(src.indexOf("data:") >= 0) {
+			info.url = null;
+			console.log("Canvas.loadImage success:" + JSON.stringify(info));
+		}
+		else {
+			console.log("Canvas.loadImage success:" + JSON.stringify(info));
+		}
+	}, function(info) {
+		image.info = info;
+		if(onerror) {
+			onerror(null);
+		}
+		console.log("Canvas.loadImage fail:" + JSON.stringify(info));
+	});
+
+	image.unload = function() {
+		if(this.textureID && this.textureID > 0) {
+			Canvas.unloadImage(this.textureID);
+			this.textureID = -1;
+		}
+	}
+
+	return image;
+}
+
+exports.createSoundEffect = function(url, onload, onerror) {
+	url = Canvas.absoluteURL(url);
+
+	var soundEffect = SoundEffect.audios[url];
+	if(soundEffect) {
+		if(onload) {
+			onload.call(soundEffect);
+		}
+		return soundEffect;
+	}
+
+	soundEffect = new SoundEffect();
+
+	soundEffect.onload = onload;
+	soundEffect.onerror = onerror;
+	soundEffect.setSrc(url);
+
+	SoundEffect.audios[url] = soundEffect;
+
+	console.log("exports.createSoundEffect:" + url);
+
+	return soundEffect;
+}
+
+exports.createSoundMusic = function(url, onload, onerror) {
+	url = Canvas.absoluteURL(url);
+
+	var soundMusic = SoundMusic.audios[url];
+	if(soundMusic) {
+		if(onload) {
+			onload.call(soundMusic);
+		}
+		return soundEffect;
+	}
+
+	soundMusic = new SoundMusic();
+
+	soundMusic.onload = onload;
+	soundMusic.onerror = onerror;
+	soundMusic.setSrc(url);
+
+	SoundMusic.audios[url] = soundMusic;
+
+	console.log("exports.createSoundMusic:" + url);
+
+	return soundMusic;
+}
+
+exports.createSingleLineTextEditor = function() {
+	return TextEditor.createSingleLineTextEditor();
+}
+
+exports.createMultiLineTextEditor = function() {
+	return TextEditor.createMultiLineTextEditor();
+}
+
+////////////////////////////////////////////////////////////////////////////
+
+exports.init = function() {
+	console.log("hook canvastouchevent ");
+	cordova.addWindowEventHandler('canvastouchevent');
+	window.addEventListener('canvastouchevent', function(e) {
+		if(Canvas.instance) {
+			Canvas.instance.dispatchTouchEvent(e);
+		}
+	});
+
+	console.log("hook soundmusicend");
+	cordova.addWindowEventHandler('soundmusicend');
+	window.addEventListener('soundmusicend', function(e) {
+		var url = e.url;
+		var audio = SoundMusic.audios[url];
+		if(audio) {
+			if(audio.onend) {
+				audio.onend();
+			}
+		}
+		console.log("soundmusicend:" + url);
+	});
+
+	cordova.addWindowEventHandler('editorchanged');
+	window.addEventListener('editorchanged', function(e) {
+		console.log("editorchanged:" + JSON.stringify(e));
+		TextEditor.textEdotr.notifyChanged(e.text);
+	}, false);
+
+	function onPause() {
+		console.log("onPause");
+	}
+
+	function onResume() {
+		console.log("onResume");
+	}
+
+	document.addEventListener("pause", onPause, false);
+	document.addEventListener("resume", onResume, false);
+
+	cordova.addWindowEventHandler('surfacechanged');
+	window.addEventListener('surfacechanged', function(e) {
+		console.log("surfacechanged:" + JSON.stringify(e));
+		Canvas.onSurfaceChanged(e.width, e.height);
+	}, false);
+
+	return;
+}
