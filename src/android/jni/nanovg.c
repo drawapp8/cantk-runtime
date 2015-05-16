@@ -18,8 +18,9 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 #include "nanovg.h"
-#define FONTSTASH_IMPLEMENTATION
+//#define FONTSTASH_IMPLEMENTATION
 #include "fontstash.h"
 //#define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -237,9 +238,10 @@ NVGcontext* nvgCreateInternal(NVGparams* params)
 	fontParams.renderDraw = NULL;
 	fontParams.renderDelete = NULL;
 	fontParams.userPtr = NULL;
+#ifdef FONTSTASH_IMPLEMENTATION	
 	ctx->fs = fonsCreateInternal(&fontParams);
 	if (ctx->fs == NULL) goto error;
-
+#endif
 	// Create font texture
 	ctx->fontImages[0] = ctx->params.renderCreateTexture(ctx->params.userPtr, NVG_TEXTURE_ALPHA, fontParams.width, fontParams.height, 0, NULL);
 	if (ctx->fontImages[0] == 0) goto error;
@@ -263,7 +265,7 @@ void nvgDeleteInternal(NVGcontext* ctx)
 	if (ctx == NULL) return;
 	if (ctx->commands != NULL) free(ctx->commands);
 	if (ctx->cache != NULL) nvg__deletePathCache(ctx->cache);
-
+#ifdef FONTSTASH_IMPLEMENTATION
 	if (ctx->fs)
 		fonsDeleteInternal(ctx->fs);
 
@@ -273,7 +275,7 @@ void nvgDeleteInternal(NVGcontext* ctx)
 			ctx->fontImages[i] = 0;
 		}
 	}
-
+#endif
 	if (ctx->params.renderDelete != NULL)
 		ctx->params.renderDelete(ctx->params.userPtr);
 
@@ -2161,6 +2163,7 @@ void nvgStroke(NVGcontext* ctx)
 	}
 }
 
+#ifdef FONTSTASH_IMPLEMENTATION
 // Add fonts
 int nvgCreateFont(NVGcontext* ctx, const char* name, const char* path)
 {
@@ -2757,4 +2760,5 @@ void nvgTextMetrics(NVGcontext* ctx, float* ascender, float* descender, float* l
 	if (lineh != NULL)
 		*lineh *= invscale;
 }
+#endif
 // vim: ft=c nu noet ts=4

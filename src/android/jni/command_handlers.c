@@ -213,6 +213,7 @@ static CommandResult command_set_textbaseline(Command* cmd) {
 }
 
 static CommandResult command_set_font(Command* cmd) {
+#ifdef FONTSTASH_IMPLEMENTATION
 	int fontSize = command_get_arg_font_size(cmd, 0, "font");
 	int bold = command_check_arg(cmd, 0, "bold", "font");
 	int italic = command_check_arg(cmd, 0, "italic", "font");
@@ -226,7 +227,7 @@ static CommandResult command_set_font(Command* cmd) {
 	else {
 		nvgFontFace(cmd->ctx, "sans");
 	}
-
+#endif
 	return CMD_OK;
 }
 
@@ -327,7 +328,7 @@ static CommandResult command_clip(Command* cmd) {
 	ww = r - x;
 	hh = b - y;
 
-	LOGI("clip: %d %d %d %d\n", xx, yy, ww, hh);
+	LOGV("clip: %d %d %d %d\n", xx, yy, ww, hh);
 	nvgScissor(ctx, xx, yy, ww, hh);
 
 //for debug
@@ -642,6 +643,7 @@ static CommandResult command_resettransform(Command* cmd)
 
 static CommandResult command_filltext3(Command* cmd) 
 {
+#ifdef FONTSTASH_IMPLEMENTATION 
 	const char* str = command_get_arg_str(cmd, 0, "text");
 	int x = command_get_arg_int(cmd, 1, "x");
 	int y = command_get_arg_int(cmd, 2, "y");
@@ -652,17 +654,19 @@ static CommandResult command_filltext3(Command* cmd)
 	
 	nvgTextAlign(cmd->ctx, textAlign);
 	nvgText(cmd->ctx, x, y, str, NULL);
+#endif
 
 	return CMD_OK;
 }
 
 static CommandResult command_stroketext3(Command* cmd) {
+#ifdef FONTSTASH_IMPLEMENTATION 
 	int x = command_get_arg_int(cmd, 0, "x");
 	int y = command_get_arg_int(cmd, 1, "y");
 	const char* str = command_get_arg_str(cmd, 2, "text");
 	LOGV("filltext: x=%d y=%d, str=%s\n", x, y, str);
 	nvgText(cmd->ctx, x, y, str, NULL);
-
+#endif
 	return CMD_OK;
 }
 
