@@ -27,6 +27,8 @@ Cantk-Runtime提供高效的HTML5 Canvas绘图API、兼容HTML5 Audio的游音�
 phonegap plugin add https://github.com/drawapp8/cantk-runtime.git
 ```
 
+[API描述](https://github.com/drawapp8/cantk-runtime/wiki/API%E6%8F%8F%E8%BF%B0)
+
 ## 相关链接
 
 [CanTK](https://github.com/drawapp8/cantk)是开源的HTML5 APP/Game Engine。
