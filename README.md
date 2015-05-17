@@ -54,5 +54,5 @@ API描述：https://github.com/drawapp8/cantk-runtime/wiki/API%E6%8F%8F%E8%BF%B0
 
 * 2.[小红帽快跑](https://github.com/drawapp8/cantk-runtime-demos/raw/master/RedHat/platforms/android/ant-build/CordovaApp-debug.apk)
  
-* 3.[FlappyBird](https://github.com/drawapp8/cantk-runtime-demos/raw/master/FlappyBird/platforms/android/ant-build/CordovaApp-debug.apk)
+* 3.[Basic Demo](https://github.com/drawapp8/cantk-runtime-demos/raw/master/Basic/platforms/android/ant-build/CordovaApp-debug.apk)
 
