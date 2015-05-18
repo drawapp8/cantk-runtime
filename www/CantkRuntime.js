@@ -1298,15 +1298,17 @@ exports.createCanvas = function () {
 }
 
 exports.createImage = function (src, onload, onerror) {
-	var image = new Image(); 
+	var image = {};
 
 	image.src = src;
+	image.width = 0;
+	image.height = 0;
 	image.info = {};
 	image.loadStartTime = Date.now();
 	Canvas.loadImage(src, function(info) {
 		image.info = info;
-//		image.width = info.width;
-//		image.height = info.height;
+		image.width = info.width;
+		image.height = info.height;
 		image.textureID = info.id;
 
 		if(onload) {
