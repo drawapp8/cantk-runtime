@@ -149,7 +149,9 @@ static char* graphic_context_get_render_commands() {
 	return gGraphicContext.commands[0];
 }
 
+static int lastTime = 0;
 static void graphic_context_exec() {
+	int cost1 = get_time() - lastTime;
 	const char* commands = NULL;
 	NVGcontext* vg = gGraphicContext.vg;
 	
@@ -169,11 +171,16 @@ static void graphic_context_exec() {
 	}
 	gGraphicContext.renderTimes++;
 
+	int fps = 60;
 	int dt = get_time() - gGraphicContext.startTime;
 	if(dt > 0) {
-		int fps = (1000 * gGraphicContext.renderTimes)/dt;
-//		LOGI("fps=%d gGraphicContext.renderTimes=%d dt=%d\n", fps, gGraphicContext.renderTimes, dt);
+		fps = (1000 * gGraphicContext.renderTimes)/dt;
 	}
+	int cost2 = get_time() - lastTime;
+	if(cost2 > 25) {
+		LOGI("graphic_context_exec: cost1=%d cost2=%d fps=%d\n", cost1, cost2, fps);
+	}
+	lastTime = get_time();
 
 	return;
 }
