@@ -5,6 +5,16 @@ function Canvas() {
 	this.listeners = {};
 }
 
+Canvas.onPause = function() {
+	Canvas.paused = true;
+	console.log("onPause");
+}
+
+Canvas.onResume = function() {
+	Canvas.paused = false;
+	console.log("onResume");
+}
+
 Canvas.PointerEvent = function(e) {
 	this.action    = e.action;
 	this.eventTime = e.eventTime
@@ -95,6 +105,9 @@ Canvas.create = function() {
 
 	canvas.width = Canvas.info.width;
 	canvas.height = Canvas.info.height;
+	canvas.density = Canvas.info.density;
+	window.devicePixelRatio = Canvas.info.density/160;
+	console.log("Canvas.create: window.devicePixelRatio=" + window.devicePixelRatio);
 
 	Object.defineProperty(canvas.style, "width", {
 		set: function (width) {
@@ -316,6 +329,8 @@ Canvas.prototype.getContext = function(type) {
 }
 
 Canvas.prototype.flush = function() {
+	if(Canvas.paused) return;
+
 	var ctx = this.context;
 	if(Canvas.fps) {
 		ctx.font = "24px sans";
@@ -1427,16 +1442,8 @@ exports.init = function() {
 		TextEditor.textEdotr.notifyChanged(e.text);
 	}, false);
 
-	function onPause() {
-		console.log("onPause");
-	}
-
-	function onResume() {
-		console.log("onResume");
-	}
-
-	document.addEventListener("pause", onPause, false);
-	document.addEventListener("resume", onResume, false);
+	document.addEventListener("pause", Canvas.onPause, false);
+	document.addEventListener("resume", Canvas.onResume, false);
 
 	cordova.addWindowEventHandler('surfacechanged');
 	window.addEventListener('surfacechanged', function(e) {
