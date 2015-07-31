@@ -71,8 +71,6 @@ class CanvasRenderer implements GLSurfaceView.Renderer {
 	}
 
 	public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-		//Process.setThreadPriority(Process.THREAD_PRIORITY_LOWEST);
-		//Process.setThreadPriority(Process.THREAD_PRIORITY_DEFAULT);
 		CanvasJNI.surfaceCreated();
 		mLastRenderTime = System.nanoTime();
 	}
