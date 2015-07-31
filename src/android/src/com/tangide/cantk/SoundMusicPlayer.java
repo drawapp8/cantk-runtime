@@ -22,6 +22,9 @@ import android.content.res.AssetFileDescriptor;
 
 public class SoundMusicPlayer extends MediaPlayer {
 	public String mURL;
+	private static final String FILE_URL_PREFIX = "file://";
+	private static final String DATA_URL_PREFIX = "data:image/";
+	private static final String ASSETS_URL_PREFIX = "file:///android_asset/";
 	public static String LOGTAG = "com.tangide.cantk.SoundMusicPlayer";
 
 	public SoundMusicPlayer() {
@@ -36,23 +39,40 @@ public class SoundMusicPlayer extends MediaPlayer {
 			mURL = url;
 		}
 
-		String dataPrefix = "data:image/";
-		String filePrefix = "file:///android_asset/";
+		String DATA_URL_PREFIX = "data:image/";
+		String ASSETS_URL_PREFIX = "file:///android_asset/";
 
-		if(url.indexOf(dataPrefix) >= 0) {
+		if(url.indexOf(DATA_URL_PREFIX) >= 0) {
 			String base64Data = url.substring(22);
 			byte [] data = Base64.decode(base64Data, 0);
 			//TODO
 		}
-		else if(url.indexOf(filePrefix) >= 0) {
+		else if(url.indexOf(ASSETS_URL_PREFIX) >= 0) {
 			int soundID = -1;
-			String fileName = url.substring(filePrefix.length());
+			String fileName = url.substring(ASSETS_URL_PREFIX.length());
 			Log.i(LOGTAG, "SoundMusicPlayer load from asset:" + fileName);
 			try {
 				AssetManager am = RuntimePlugin.getActivity().getAssets();
 				AssetFileDescriptor afd = am.openFd(fileName);
 				this.setDataSource(afd.getFileDescriptor(), afd.getStartOffset(), afd.getLength());
 				afd.close();
+				this.prepare();
+
+        		callbackContext.success(soundID);
+				Log.i(LOGTAG, "SoundMusicPlayer loadURL success:" + url);
+			}catch(Exception e) {
+				e.printStackTrace();
+				Log.i(LOGTAG, "SoundMusicPlayer loadURL fail:" + e.toString());
+        		callbackContext.error(e.toString());
+			}
+			return true;
+		}
+		else if(url.indexOf(FILE_URL_PREFIX) >= 0) {
+			int soundID = -1;
+			String fileName = url.substring(FILE_URL_PREFIX.length());
+			Log.i(LOGTAG, "SoundMusicPlayer load from file:" + fileName);
+			try {
+				this.setDataSource(fileName);
 				this.prepare();
 
         		callbackContext.success(soundID);

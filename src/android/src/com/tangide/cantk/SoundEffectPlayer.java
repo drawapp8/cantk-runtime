@@ -24,6 +24,9 @@ import android.content.res.AssetFileDescriptor;
 public class SoundEffectPlayer extends SoundPool {
 	public String mURL;
 	public static String LOGTAG = "com.tangide.cantk.SoundEffectPlayer";
+	private static final String FILE_URL_PREFIX = "file://";
+	private static final String DATA_URL_PREFIX = "data:image/";
+	private static final String ASSETS_URL_PREFIX = "file:///android_asset/";
 
 	public SoundEffectPlayer() {
 		super(10, AudioManager.STREAM_MUSIC, 0);
@@ -36,23 +39,36 @@ public class SoundEffectPlayer extends SoundPool {
 			mURL = url;
 		}
 
-		String dataPrefix = "data:image/";
-		String filePrefix = "file:///android_asset/";
-
-		if(url.indexOf(dataPrefix) >= 0) {
+		if(url.indexOf(DATA_URL_PREFIX) >= 0) {
 			String base64Data = url.substring(22);
 			byte [] data = Base64.decode(base64Data, 0);
 			//TODO
 		}
-		else if(url.indexOf(filePrefix) >= 0) {
+		else if(url.indexOf(ASSETS_URL_PREFIX) >= 0) {
 			int soundID = -1;
-			String fileName = url.substring(filePrefix.length());
+			String fileName = url.substring(ASSETS_URL_PREFIX.length());
 			Log.i(LOGTAG, "SoundEffectPlayer load from asset:" + fileName);
 			try {
 				AssetManager am = RuntimePlugin.getActivity().getAssets();
 				AssetFileDescriptor afd = am.openFd(fileName);
 				soundID = this.load(afd, 0);
 				afd.close();
+
+        		callbackContext.success(soundID);
+				Log.i(LOGTAG, "SoundEffectPlayer loadURL success:" + url);
+			}catch(Exception e) {
+				e.printStackTrace();
+				Log.i(LOGTAG, "SoundEffectPlayer loadURL fail:" + e.toString());
+        		callbackContext.error(e.toString());
+			}
+			return true;
+		}
+		else if(url.indexOf(FILE_URL_PREFIX) >= 0) {
+			int soundID = -1;
+			String fileName = url.substring(FILE_URL_PREFIX.length());
+			Log.i(LOGTAG, "SoundEffectPlayer load from file:" + fileName);
+			try {
+				soundID = this.load(fileName, 0);
 
         		callbackContext.success(soundID);
 				Log.i(LOGTAG, "SoundEffectPlayer loadURL success:" + url);

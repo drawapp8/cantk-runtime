@@ -2,6 +2,7 @@ package com.tangide.cantk;
 
 import android.util.Log;
 import java.io.InputStream;
+import java.io.FileInputStream;
 import android.util.Base64;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -14,6 +15,9 @@ import org.apache.cordova.CallbackContext;
 
 public class ImageLoader {
     private static final String LOGTAG = "com.tangide.cantk.ImageLoader";
+	private static final String FILE_URL_PREFIX = "file://";
+	private static final String DATA_URL_PREFIX = "data:image/";
+	private static final String ASSETS_URL_PREFIX = "file:///android_asset/";
 
 	private static Bitmap getBitmapFromAsset(String filePath) {
 		AssetManager assetManager = RuntimePlugin.getActivity().getAssets();
@@ -29,23 +33,40 @@ public class ImageLoader {
 
 		return bitmap;
 	}
+	
+	private static Bitmap getBitmapFromFile(String filePath) {
+		Bitmap bitmap = null;
+		try {
+			FileInputStream istr = new FileInputStream(filePath);
+			bitmap = BitmapFactory.decodeStream(istr);
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.i(LOGTAG, "Load Asset Bitmap Failed:" + e.toString());
+		}
+
+		return bitmap;
+	}
 
 	public static boolean loadImage(CallbackContext callbackContext, String url) {
 		Bitmap bitmap = null;
-		String dataPrefix = "data:image/";
-		String filePrefix = "file:///android_asset/";
 
-		if(url.indexOf(dataPrefix) >= 0) {
+		if(url.indexOf(DATA_URL_PREFIX) >= 0) {
 			String base64Data = url.substring(22);
 			byte [] data = Base64.decode(base64Data, 0);
 			bitmap = BitmapFactory.decodeByteArray(data, 0, data.length, null);
 			Log.i(LOGTAG, "loadImage from base64 data.");
 			ActionInfoQueue.addActionInfo(ActionInfo.createLoadImageAction(callbackContext, url, bitmap));
 		}
-		else if(url.indexOf(filePrefix) >= 0) {
-			String fileName = url.substring(filePrefix.length());
+		else if(url.indexOf(ASSETS_URL_PREFIX) >= 0) {
+			String fileName = url.substring(ASSETS_URL_PREFIX.length());
 			bitmap = ImageLoader.getBitmapFromAsset(fileName);
 			Log.i(LOGTAG, "loadImage from asset:" + fileName);
+			ActionInfoQueue.addActionInfo(ActionInfo.createLoadImageAction(callbackContext, url, bitmap));
+		}
+		else if(url.indexOf(FILE_URL_PREFIX) >= 0) {
+			String fileName = url.substring(FILE_URL_PREFIX.length());
+			bitmap = ImageLoader.getBitmapFromFile(fileName);
+			Log.i(LOGTAG, "loadImage from file:" + fileName);
 			ActionInfoQueue.addActionInfo(ActionInfo.createLoadImageAction(callbackContext, url, bitmap));
 		}
 		else {
