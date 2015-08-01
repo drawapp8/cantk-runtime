@@ -31,6 +31,7 @@ import android.widget.FrameLayout;
 import android.widget.RelativeLayout;
 import android.widget.AbsoluteLayout;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebView;
 
 public class RuntimePlugin extends CordovaPlugin {
 	private static RuntimePlugin thePlugin = null;
@@ -40,7 +41,8 @@ public class RuntimePlugin extends CordovaPlugin {
 	private Activity mActivity;
 	private CanvasView mCanvasView;
 	private TextEditor mTextEditor;
-	private CordovaWebView mCordovaView;
+	private WebView mWebView;
+	private CordovaWebView mCordovaWebView;
 	private SoundEffectPlayer mSoundEffectPlayer;
 	private SoundMusicPlayer mSoundMusicPlayer;
 
@@ -55,9 +57,10 @@ public class RuntimePlugin extends CordovaPlugin {
 		mSoundEffectPlayer = new SoundEffectPlayer();
 
 		thePlugin = this;
-		mCordovaView = webView;
+		mCordovaWebView = webView;
+		mWebView = (WebView)webView.getView();
 		DirectCall dr = new DirectCall();
-		webView.addJavascriptInterface(dr, "DirectCall");
+		mWebView.addJavascriptInterface(dr, "DirectCall");
 		
 		final RuntimePlugin me = this;
 		mActivity.runOnUiThread(new Runnable() {
@@ -71,7 +74,7 @@ public class RuntimePlugin extends CordovaPlugin {
 	@Override
     public void onDestroy() {
 		mActivity = null;
-		mCordovaView = null;
+		mWebView = null;
 		mCanvasView = null;
 		mTextEditor = null;
 		thePlugin = null;
@@ -211,7 +214,7 @@ public class RuntimePlugin extends CordovaPlugin {
 	}
 
 	public static boolean execJs(String js) {
-		thePlugin.mCordovaView.sendJavascript(js);
+		thePlugin.mCordovaWebView.sendJavascript(js);
 
 		return true;
 	}
@@ -232,20 +235,20 @@ public class RuntimePlugin extends CordovaPlugin {
 	}
 	
 	public static boolean dispatchKeyDown (int keyCode, KeyEvent event) {
-		if ( thePlugin == null || thePlugin.mCordovaView == null ) {
+		if ( thePlugin == null || thePlugin.mWebView == null ) {
 			return false;				
 		}
 		else {
-			return thePlugin.mCordovaView.onKeyDown(keyCode, event);
+			return thePlugin.mWebView.onKeyDown(keyCode, event);
 		}
 	}
 	
 	public static boolean dispatchKeyUp (int keyCode, KeyEvent event) {
-		if ( thePlugin == null || thePlugin.mCordovaView == null ) {
+		if ( thePlugin == null || thePlugin.mWebView == null ) {
 			return false;				
 		}
 		else {
-			return thePlugin.mCordovaView.onKeyUp(keyCode, event);
+			return thePlugin.mWebView.onKeyUp(keyCode, event);
 		}
 	}
 	
