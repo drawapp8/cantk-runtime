@@ -27,9 +27,9 @@
 phonegap plugin add https://github.com/drawapp8/cantk-runtime.git
 ```
 
-API描述：https://github.com/drawapp8/cantk-runtime/wiki/API%E6%8F%8F%E8%BF%B0
+1.[API描述](https://github.com/drawapp8/cantk-runtime/wiki/API%E6%8F%8F%E8%BF%B0)
 
-[如何将cantk-runtime嵌入到现有的APP中？](https://github.com/drawapp8/cantk-runtime-demos/wiki/%E5%A6%82%E4%BD%95%E5%B0%86cantk-runtime%E5%B5%8C%E5%85%A5%E5%88%B0%E7%8E%B0%E6%9C%89%E7%9A%84APP%E4%B8%AD)
+[2.如何将cantk-runtime嵌入到现有的APP中？](https://github.com/drawapp8/cantk-runtime-demos/wiki/%E5%A6%82%E4%BD%95%E5%B0%86cantk-runtime%E5%B5%8C%E5%85%A5%E5%88%B0%E7%8E%B0%E6%9C%89%E7%9A%84APP%E4%B8%AD)
 
 
 ## 相关链接
